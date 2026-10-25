@@ -173,6 +173,73 @@ export function browserTimeZone(): string {
   }
 }
 
+export function getFallbackOverview(days: OverviewRange, timeZone: string): DashboardOverview {
+  return {
+    generatedAt: new Date().toISOString(),
+    timeZone: timeZone || 'UTC',
+    days,
+    unit: 'day',
+    periodStart: new Date(Date.now() - days * 86400000).toISOString(),
+    previousStart: new Date(Date.now() - 2 * days * 86400000).toISOString(),
+    previousEnd: new Date(Date.now() - days * 86400000).toISOString(),
+    replyTargetMinutes: 15,
+    attention: {
+      waiting: 0,
+      oldestWaitingSince: null,
+      waitingOverTarget: 0,
+      unassigned: 0,
+      windowsClosing: 0,
+      failed: 0,
+      failedMessages: [],
+      queue: [],
+    },
+    replies: {
+      medianHuman: null,
+      medianHumanPrevious: null,
+      team: [],
+      ai: { replies: 0, medianMinutes: null },
+    },
+    volume: {
+      series: [],
+      hourly: [],
+    },
+    kpis: {
+      newConversations: 0,
+      newConversationsPrevious: 0,
+      resolved: 0,
+      resolvedPrevious: 0,
+      dealsWon: 0,
+      dealsWonPrevious: 0,
+      dealsWonValue: 0,
+      broadcastDelivered: 0,
+      broadcastRead: 0,
+      broadcastDeliveredPrevious: 0,
+      broadcastReadPrevious: 0,
+    },
+    pipeline: {
+      pipelines: [],
+      stages: [],
+      stats: [],
+    },
+    campaigns: {
+      latestBroadcast: null,
+      automationRuns: 0,
+      automationFailed: 0,
+      flowFailed: 0,
+      topFailingFlow: null,
+      templatesApproved: 0,
+      templatesRejected: 0,
+    },
+    setup: {
+      whatsappConnected: false,
+      hasContacts: false,
+      hasApprovedTemplate: false,
+      memberCount: 1,
+      hasConversations: false,
+    },
+  }
+}
+
 export async function loadOverview(
   db: SupabaseClient,
   days: OverviewRange,

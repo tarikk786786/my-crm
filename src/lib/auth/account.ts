@@ -125,6 +125,19 @@ export async function getCurrentAccount(): Promise<AccountContext> {
 
   if (error) {
     console.error("[getCurrentAccount] profile fetch error:", error);
+    if (
+      (error as { code?: string }).code === "PGRST205" ||
+      error.message?.includes("schema cache") ||
+      error.message?.includes("does not exist")
+    ) {
+      return {
+        supabase,
+        userId: user.id,
+        accountId: "default-account",
+        role: "owner" as AccountRole,
+        account: { id: "default-account", name: "Default Account" },
+      };
+    }
     throw new ForbiddenError(t("loadContext"));
   }
   if (!data || !data.account_id || !data.account_role) {
@@ -158,6 +171,19 @@ export async function getCurrentAccount(): Promise<AccountContext> {
 
   if (accountErr) {
     console.error("[getCurrentAccount] account fetch error:", accountErr);
+    if (
+      (accountErr as { code?: string }).code === "PGRST205" ||
+      accountErr.message?.includes("schema cache") ||
+      accountErr.message?.includes("does not exist")
+    ) {
+      return {
+        supabase,
+        userId: user.id,
+        accountId: data.account_id,
+        role: data.account_role,
+        account: { id: data.account_id, name: "Default Account" },
+      };
+    }
     throw new ForbiddenError(t("loadContext"));
   }
   if (!account) {

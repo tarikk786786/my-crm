@@ -173,4 +173,27 @@ describe("getCurrentAccount", () => {
       "Profile is not linked to an account",
     );
   });
+
+  it("returns fallback context when table is missing from schema cache (PGRST205)", async () => {
+    const { client } = makeClient({
+      user: { id: "user-1" },
+      byTable: {
+        profiles: {
+          data: null,
+          error: {
+            code: "PGRST205",
+            message: "Could not find the table 'public.profiles' in the schema cache",
+          },
+        },
+      },
+    });
+    createClient.mockReturnValue(client);
+    const ctx = await getCurrentAccount();
+    expect(ctx).toMatchObject({
+      userId: "user-1",
+      accountId: "default-account",
+      role: "owner",
+      account: { id: "default-account", name: "Default Account" },
+    });
+  });
 });

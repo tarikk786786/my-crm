@@ -60,6 +60,10 @@ export function PresenceHeartbeat() {
         p_status: currentStatus(),
       });
       if (error && !cancelled) {
+        if (error.code === "PGRST202" || error.message?.includes("schema cache")) {
+          // RPC does not exist yet on unmigrated database; silently skip
+          return;
+        }
         // Non-fatal: presence is best-effort. Log once per failure so a
         // misconfigured RPC is visible without spamming.
         console.error("[PresenceHeartbeat] touch_presence failed:", error.message);

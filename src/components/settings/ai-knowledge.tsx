@@ -59,7 +59,11 @@ export function AiKnowledgeCard({
   }, []);
 
   useEffect(() => {
-    if (!accountId || loadedAccountIdRef.current === accountId) return;
+    if (!accountId) {
+      setLoading(false);
+      return;
+    }
+    if (loadedAccountIdRef.current === accountId) return;
     loadedAccountIdRef.current = accountId;
     void fetchDocs();
   }, [accountId, fetchDocs]);

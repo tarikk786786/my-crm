@@ -78,7 +78,13 @@ export default function BroadcastsPage() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        if (fetchError.code === 'PGRST205' || fetchError.message?.includes('schema cache')) {
+          setBroadcasts([]);
+          return;
+        }
+        throw fetchError;
+      }
       setBroadcasts(data ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('errorLoad'));

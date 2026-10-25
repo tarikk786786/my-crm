@@ -38,6 +38,10 @@ export default function NotificationsPage() {
       .order("created_at", { ascending: false })
       .limit(100);
     if (fetchErr) {
+      if (fetchErr.code === "PGRST205" || fetchErr.message?.includes("schema cache")) {
+        setNotifications([]);
+        return;
+      }
       setError(fetchErr.message);
       return;
     }

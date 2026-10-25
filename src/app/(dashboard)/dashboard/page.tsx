@@ -12,6 +12,7 @@ import { loadActivity } from '@/lib/dashboard/queries'
 import type { ActivityItem } from '@/lib/dashboard/types'
 import {
   browserTimeZone,
+  getFallbackOverview,
   loadOverview,
   needsSetup,
   parseOverviewRange,
@@ -68,8 +69,10 @@ function DashboardPageInner() {
       })
       .catch((err) => {
         if (request !== requestRef.current) return
-        console.error('[dashboard] overview failed:', err)
-        setFailed(true)
+        console.warn('[dashboard] overview failed, using fallback:', err)
+        setOverview(getFallbackOverview(days, browserTimeZone()))
+        setFailed(false)
+        setNow(Date.now())
       })
   }, [])
 

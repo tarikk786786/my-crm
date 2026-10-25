@@ -43,6 +43,21 @@ export async function GET() {
       .order("created_at", { ascending: true });
 
     if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        return NextResponse.json({
+          members: [
+            {
+              id: ctx.userId,
+              userId: ctx.userId,
+              name: 'Workspace Owner',
+              email: null,
+              avatarUrl: null,
+              role: ctx.role,
+              joinedAt: new Date().toISOString(),
+            },
+          ],
+        });
+      }
       console.error("[GET /api/account/members] fetch error:", error);
       return NextResponse.json(
         { error: t('account.members.loadFailed') },

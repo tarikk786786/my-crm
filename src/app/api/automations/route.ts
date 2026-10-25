@@ -23,7 +23,12 @@ export async function GET() {
     .from('automations')
     .select('*')
     .order('created_at', { ascending: false })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+      return NextResponse.json({ automations: [] })
+    }
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
   return NextResponse.json({ automations: data ?? [] })
 }
 

@@ -41,6 +41,9 @@ export async function GET() {
       .maybeSingle()
 
     if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        return NextResponse.json({ configured: false })
+      }
       console.error('[ai/config GET] fetch error:', error)
       return NextResponse.json(
         { error: t('ai.loadConfigFailed') },

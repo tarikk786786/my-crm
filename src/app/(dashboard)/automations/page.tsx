@@ -75,7 +75,13 @@ export default function AutomationsPage() {
         .from("automations")
         .select("*")
         .order("created_at", { ascending: false })
-      if (fetchErr) throw fetchErr
+      if (fetchErr) {
+        if (fetchErr.code === "PGRST205" || fetchErr.message?.includes("schema cache")) {
+          setAutomations([])
+          return
+        }
+        throw fetchErr
+      }
       setAutomations((data ?? []) as Automation[])
     } catch (err) {
       setError(err instanceof Error ? err.message : t("loadFailed"))

@@ -26,6 +26,9 @@ export async function GET() {
       .eq('account_id', accountId)
       .order('updated_at', { ascending: false })
     if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        return NextResponse.json({ documents: [] })
+      }
       console.error('[ai/knowledge GET] error:', error)
       return NextResponse.json(
         { error: t('ai.knowledge.loadKbFailed') },

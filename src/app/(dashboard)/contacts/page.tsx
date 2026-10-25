@@ -147,6 +147,12 @@ export default function ContactsPage() {
       });
       if (seq !== fetchSeq.current) return; // superseded by a newer fetch
       if (error) {
+        if (error.code === 'PGRST205' || error.code === 'PGRST202' || error.message?.includes('schema cache')) {
+          setContacts([]);
+          setTotalCount(0);
+          setLoading(false);
+          return;
+        }
         toast.error(t('toastFailedLoad'));
         setLoading(false);
         return;
@@ -169,6 +175,12 @@ export default function ContactsPage() {
       const { data, count: exactCount, error } = await query;
       if (seq !== fetchSeq.current) return; // superseded by a newer fetch
       if (error) {
+        if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+          setContacts([]);
+          setTotalCount(0);
+          setLoading(false);
+          return;
+        }
         toast.error(t('toastFailedLoad'));
         setLoading(false);
         return;
