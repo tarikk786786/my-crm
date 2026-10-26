@@ -162,3 +162,6 @@ export function analyzeCustomerMessage(text: string): ConversationAnalysis {
     summary: `Customer asking about ${intent.replace("_", " ")} in ${language.toUpperCase()}. Sentiment: ${sentiment}.`,
   };
 }
+
+export const analyzeConversation = analyzeCustomerMessage;
+
